@@ -1,0 +1,46 @@
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import java.io.IOException;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+public class GoogleSearch 
+{
+
+    public static void main(String[] args) 
+    {
+        // Set the path to your ChromeDriver executable
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        // Initialize ChromeDriver
+        WebDriver driver = new ChromeDriver();
+        // Open WhatsApp Web
+        driver.get("https://web.whatsapp.com/");
+        // Wait for the user to scan the QR code and log in manually
+        // Then, you can locate the messages and extract their text
+        WebElement messageElement = driver.findElement(By.className("message-in"));
+        String query = messageElement.getText();
+        try {
+            // Connect to Google and get search results
+            Document doc = Jsoup.connect("https://www.google.com/search?q=" + query).get();
+
+            // Extract search results
+            Elements results = doc.select("div.g");
+
+            // Print titles and snippets of search results
+            for (Element result : results) {
+                String title = result.select("h3").text();
+                String snippet = result.select("span.st").text();
+                System.out.println("Title: " + title);
+                System.out.println("Snippet: " + snippet);
+                System.out.println();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // Close the browser
+        driver.quit();
+    }
+}
